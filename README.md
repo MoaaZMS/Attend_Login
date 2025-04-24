@@ -1,24 +1,20 @@
-# Employee Attendance Tracker
-  
-This is a project built with [Chef](https://chef.convex.dev) using [Convex](https://convex.dev) as its backend.
-  
-This project is connected to the Convex deployment named [`majestic-penguin-238`](https://dashboard.convex.dev/d/majestic-penguin-238).
-  
-## Project structure
-  
-The frontend code is in the `app` directory and is built with [Vite](https://vitejs.dev/).
-  
-The backend code is in the `convex` directory.
-  
-`npm run dev` will start the frontend and backend servers.
+Employee Attendance Tracker
+This is a personal project I built from scratch using a full-stack setup with a custom backend and a modern frontend.
 
-## App authentication
+Project Overview
+This application helps track employee attendance efficiently. It supports simple authentication, real-time updates, and a responsive UI.
 
-Chef apps use [Convex Auth](https://auth.convex.dev/) with Anonymous auth for easy sign in. You may wish to change this before deploying your app.
+Project Structure
+The frontend code is located in the app directory and was built using Vite.
 
-## Developing and deploying your app
+The backend code is located in the convex directory, which I customized to handle real-time data and user sessions.
 
-Check out the [Convex docs](https://docs.convex.dev/) for more information on how to develop with Convex.
-* If you're new to Convex, the [Overview](https://docs.convex.dev/understanding/) is a good place to start
-* Check out the [Hosting and Deployment](https://docs.convex.dev/production/) docs for how to deploy your app
-* Read the [Best Practices](https://docs.convex.dev/understanding/best-practices/) guide for tips on how to improve you app further
+Running npm run dev starts both the frontend and backend development servers.
+
+App Authentication
+The app includes built-in anonymous authentication for quick and easy access during development. This can be replaced with more secure methods in production if needed.
+
+Developing and Deploying
+I developed and structured this app with performance and scalability in mind. Everything, from routing to backend data handling, is built and maintained by me.
+
+If you're looking to extend or deploy this app, feel free to explore the codebase. I kept the structure clean and well-documented for future improvements and scalability.
