@@ -106,3 +106,49 @@ export const getTodayStatus = query({
       .unique();
   },
 });
+
+export const resetSpecificStats = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Not authenticated");
+
+    const records = await ctx.db
+      .query("attendance")
+      .withIndex("by_user_and_date", (q) => q.eq("userId", userId))
+      .collect();
+
+    // Update each record to reset overtime while keeping working hours
+    for (const record of records) {
+      if (record.overtime) {
+        await ctx.db.patch(record._id, {
+          overtime: 0
+        });
+      }
+    }
+
+    return null;
+  },
+});
+
+export const getAllAttendanceRecords = query({
+  args: {},
+  handler: async (ctx) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) return null;
+
+    const records = await ctx.db
+      .query("attendance")
+      .withIndex("by_user_and_date", (q) => q.eq("userId", userId))
+      .order("desc")
+      .collect();
+
+    return records.map(record => ({
+      date: record.date,
+      checkIn: record.checkIn,
+      checkOut: record.checkOut,
+      workingHours: record.workingHours,
+      overtime: record.overtime
+    }));
+  },
+});

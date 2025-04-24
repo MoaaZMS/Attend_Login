@@ -90,9 +90,11 @@ function Content() {
   const loggedInUser = useQuery(api.auth.loggedInUser);
   const todayStatus = useQuery(api.attendance.getTodayStatus);
   const stats = useQuery(api.attendance.getStats);
+  const allRecords = useQuery(api.attendance.getAllAttendanceRecords);
   
   const checkIn = useMutation(api.attendance.checkIn);
   const checkOut = useMutation(api.attendance.checkOut);
+  const resetStats = useMutation(api.attendance.resetSpecificStats);
 
   const handleCheckIn = async () => {
     try {
@@ -210,6 +212,64 @@ function Content() {
                   <p className="text-sm text-gray-500 dark:text-gray-400">Compensatory Days</p>
                   <p className="text-2xl font-semibold">{stats.compensatoryDays}</p>
                 </div>
+              </div>
+              <div className="mt-4 flex gap-4">
+                <button
+                  onClick={async () => {
+                    try {
+                      await resetStats();
+                      toast({
+                        title: "Reset successful",
+                        description: "Compensatory Days and Total Overtime Hours have been reset",
+                      });
+                    } catch (error) {
+                      toast({
+                        title: "Error",
+                        description: error instanceof Error ? error.message : "Failed to reset stats",
+                        variant: "destructive",
+                      });
+                    }
+                  }}
+                  className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700"
+                >
+                  Reset Overtime Stats
+                </button>
+                <button
+                  onClick={() => {
+                    if (!allRecords) return;
+
+                    const data = [
+                      ['Date', 'Check In', 'Check Out', 'Working Hours', 'Overtime'],
+                      ...allRecords.map(record => [
+                        record.date,
+                        new Date(record.checkIn).toLocaleTimeString(),
+                        record.checkOut ? new Date(record.checkOut).toLocaleTimeString() : '-',
+                        record.workingHours?.toFixed(2) || '-',
+                        record.overtime?.toFixed(2) || '0'
+                      ])
+                    ];
+                    
+                    // Create CSV content
+                    const csvContent = "data:text/csv;charset=utf-8," + data.map(row => row.join(",")).join("\n");
+                    
+                    // Create download link
+                    const encodedUri = encodeURI(csvContent);
+                    const link = document.createElement("a");
+                    link.setAttribute("href", encodedUri);
+                    link.setAttribute("download", `attendance_report_${new Date().toISOString().split('T')[0]}.csv`);
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+
+                    toast({
+                      title: "Export successful",
+                      description: "Your attendance report has been downloaded",
+                    });
+                  }}
+                  className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700"
+                >
+                  Export to Excel
+                </button>
               </div>
             </div>
           )}
